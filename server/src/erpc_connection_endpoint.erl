@@ -4,6 +4,8 @@
 %%% Description : This is the endpoint of an erpc tunnel
 %%%
 %%% Created : 11 Nov 2006 by Rudolph van Graan <>
+%%% Copyright: (C) 2006,2007 by Rudolph van Graan
+
 %%%-------------------------------------------------------------------
 -module(erpc_connection_endpoint).
 

@@ -4,6 +4,7 @@
 %%% Description : 
 %%%
 %%% Created : 30 May 2007 by Rudolph van Graan <>
+%%% Copyright: (C) 2006,2007 by Rudolph van Graan
 %%%-------------------------------------------------------------------
 -module(erpc_file_stream).
 

@@ -1,7 +1,6 @@
 %%% File    : erpc_client_appsup.erl
-%%% Author  : Ilse Potgieter <>
 %%% Description : 
-%%% Created : 13 Nov 2006 by Ilse Potgieter <>
+%%% Copyright: (C) 2006 by Rudolph van Graan
 
 -module(erpc_client_appsup).
 

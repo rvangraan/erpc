@@ -2,7 +2,7 @@
 %%% File    : erpc_stream_recv.erl
 %%% Author  : Rudolph van Graan <>
 %%% Description : 
-%%%
+%%% Copyright: (C) 2006 by Rudolph van Graan
 %%% Created : 28 May 2007 by Rudolph van Graan <>
 %%%-------------------------------------------------------------------
 -module(erpc_stream_recv).

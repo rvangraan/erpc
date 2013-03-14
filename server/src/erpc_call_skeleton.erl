@@ -2,6 +2,7 @@
 %%% Author  : Rudolph van Graan <>
 %%% Description : Implements the actual remote call
 %%% Created : 11 Nov 2006 by Rudolph van Graan <>
+%%% Copyright: (C) 2006,2007 by Rudolph van Graan
 
 -module(erpc_call_skeleton).
 

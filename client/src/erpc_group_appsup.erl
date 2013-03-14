@@ -1,7 +1,5 @@
 %%% File    : erpc_client_appsup.erl
-%%% Author  : Ilse Potgieter <>
 %%% Description : 
-%%% Created : 13 Nov 2006 by Ilse Potgieter <>
 
 -module(erpc_group_appsup).
 
