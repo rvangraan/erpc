@@ -16,6 +16,8 @@ Features:
    failover between multiple backends
  * ERPC includes a call-back and streaming mechanism that allows the server to synchronously
    stream data to the client. This is useful for use cases such as sending files via HTTP etc.
+ * Simple security mechanism to allow the client to only call known modules 
+ * Ability to declare multiple pools of backends
  
 Issues:
  1. No support for SSL yet
