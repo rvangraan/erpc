@@ -5,6 +5,7 @@
 %%% This module is the controller for the erpc client side
 %%% All erpc calls go through the GS
 %%% Created : 13 Nov 2006 by Rudolph van Graan <>
+%%% Copyright: (C) 2006 by Rudolph van Graan
 %%%-------------------------------------------------------------------
 -module(erpc).
 

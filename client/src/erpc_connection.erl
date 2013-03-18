@@ -2,8 +2,8 @@
 %%% File    : erpc_connection.erl
 %%% Author  : Rudolph van Graan <>
 %%% Description : 
-%%%
 %%% Created : 12 Nov 2006 by Rudolph van Graan <>
+%%% Copyright: (C) 2006 by Rudolph van Graan
 %%%-------------------------------------------------------------------
 -module(erpc_connection).
 
