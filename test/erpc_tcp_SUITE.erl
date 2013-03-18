@@ -10,7 +10,7 @@
 %% Note: This directive should only be used in test suites.
 -compile(export_all).
 
--include("test_server/include/test_server.hrl").
+-include_lib("test_server/include/test_server.hrl").
 
 %%--------------------------------------------------------------------
 init_per_suite(Config) ->
