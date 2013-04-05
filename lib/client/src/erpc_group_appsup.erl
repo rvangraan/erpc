@@ -43,7 +43,7 @@ start_link(Args) ->
 %%====================================================================
 init([]) ->
   SupFlags = {one_for_one, 200, 600},
-  case application:get_env(erpc,groups) of
+  case application:get_env(erpc_client,groups) of
     {ok,[]} ->
       error_logger:warning_report(["ERPC SUPERVISOR - No ERPC groups defined",
 				   {pid,self()},
@@ -62,7 +62,7 @@ init([]) ->
 
 make_spec({GroupName,Config}) when is_atom(GroupName),
 				     is_list(Config) ->
-  Backends = params:fget(backends,Config,[]),
+  Backends = proplists:get_value(backends,Config,[]),
   {{erpc_group,GroupName},{erpc_client_appsup,start_link,[GroupName,Backends]},
    permanent,2000,supervisor,[]};
 make_spec(InvalidSpec) ->
@@ -80,4 +80,5 @@ make_spec(InvalidSpec) ->
 %%====================================================================
 %% Internal functions
 %%====================================================================
+
 

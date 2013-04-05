@@ -9,7 +9,7 @@
     erpc_group_appsup]
   },
   {registered, [erpc]},
-  {applications, [proc_reg]},
+  {applications, [gproc]},
   {mod, {erpc_group_appsup, []}},
   {env, [{groups,[
 		  {default_group,[{backends,[{"localhost",55555}]}]}

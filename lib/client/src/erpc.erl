@@ -43,10 +43,10 @@ start_link(Groupname,Backends) ->
   gen_server:start_link(?MODULE, [Owner,Groupname,Backends], []).
 
 where(G) ->
-  R = proc_reg:where({erpc,G}),
+  R = gproc:where({n,l,{erpc,G}}),
   case R of
     undefined ->
-      throw({error,{no_backend,G}});
+      throw({erpc,{no_backend,G}});
     R ->
       R
   end.
@@ -75,7 +75,7 @@ call(M,F,A) ->
   call(default_group,M,F,A).
 
 call(G,M,F,A) ->
-  case gdb:in_transaction() of
+  case in_mnesia_transaction() of
     true  -> throw(erpc_mnesia_transaction_active);
     false -> ok
   end,
@@ -84,7 +84,7 @@ call(G,M,F,A) ->
     {ok,Connection} ->
       erpc_connection:call(Connection,M,F,A);
     {error,no_backend} ->
-      throw({error,{no_backend,G}})
+      throw({erpc,{no_backend,G}})
   end.
 	
 remove_ready_connection(G) ->
@@ -104,7 +104,7 @@ create_remote_stream_sender(G,StreamRecvPID) ->
       {ok,RemoteStreamSendPID} = erpc_connection:create_remote_stream_sender(Connection,StreamRecvPID),
       {ok,RemoteStreamSendPID,Connection};
     {error,no_backend} ->
-      throw({error,{no_backend,G}})
+      throw({erpc,{no_backend,G}})
   end.
 
 deallocate_remote_stream_sender(Connection,RemoteStreamSendPID) ->
@@ -121,7 +121,7 @@ deallocate_remote_stream_sender(Connection,RemoteStreamSendPID) ->
 %%--------------------------------------------------------------------
 init([Owner,Groupname,Backends]) ->
   process_flag(trap_exit,true),
-  true = proc_reg:reg({erpc,Groupname},self()),
+  true = gproc:reg({n,l,{erpc,Groupname}},self()),
   Monitor = erlang:monitor(process,Owner),
   Connections = start_connections(Groupname,Backends),
   {ok, #state{owner=Owner,
@@ -202,3 +202,16 @@ shutdown_connection(PID) ->
     {'DOWN',Monitor,process,_Object,_Other} ->
       ok
   end.
+
+
+%%--------------------------------------------------------------------
+%% @doc Returns whether or not the current process has an active Mnesia transaction or not
+%% @end
+-spec in_mnesia_transaction() -> true | false.
+in_mnesia_transaction() ->
+    case get(mnesia_activity_state) of
+        {_, _ActivityId, _Opaque} ->  
+	    true;
+        _ ->
+	    false
+    end.
