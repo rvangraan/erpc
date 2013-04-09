@@ -1,6 +1,6 @@
 {application, erpc_client,
- [{description, "ERPC Client  %VSN%"},
-  {vsn, "%VSN%"},
+ [{description, "ERPC Client"},
+  {vsn, "0.0.1"},
   {modules, 
    [erpc,
     erpc_connection,

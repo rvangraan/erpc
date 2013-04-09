@@ -1,6 +1,6 @@
 {application, erpc_srv,
-   [{description, "ERPC Server  %VSN%"},
-    {vsn, "%VSN%"},
+   [{description, "ERPC Server"},
+    {vsn, "0.0.1"},
     {modules, 
 	[erpc_call_skeleton,
          erpc_connection_endpoint,
