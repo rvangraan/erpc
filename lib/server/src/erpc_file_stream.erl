@@ -136,7 +136,7 @@ do_delete_file(State) ->
       ok
   end.
 
-log(String,Params) ->
+log(_String,_Params) ->
   ok.
 %  system_logger:erpc_log("ERPC: "++String,Params).
 

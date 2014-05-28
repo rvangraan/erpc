@@ -21,7 +21,7 @@
 	 error/3]).
 
 -export([init/1, 
-	 handle_sync_event/4, handle_info/3, terminate/3, code_change/4]).
+	 handle_event/3, handle_sync_event/4, handle_info/3, terminate/3, code_change/4]).
 
 -export([run/2,
 	 go/2]).
@@ -53,7 +53,7 @@ call(Connection,M,F,A) ->
   R = try
 	gen_fsm:sync_send_event(Connection,{call,M,F,A},infinity)
       catch
-	exit:{noproc,E} ->
+	exit:{noproc,_E} ->
 	  {error,connection_not_ready}
       end,
   case R  of
@@ -144,6 +144,9 @@ error(heartbeat, _From, State)->
 error({call,_M,_F,_A},_From,State) ->
   {reply,{error,connection_not_ready},error,State}.
 
+%%--------------------------------------------------------------------
+handle_event(_Event, StateName, State) ->
+    {next_state, StateName, State}.
 
 %%--------------------------------------------------------------------
 handle_sync_event(status, _From, StateName, State) ->
@@ -225,8 +228,8 @@ send_ok_reply(Socket,From) ->
   ok = gen_tcp:send(Socket,Packet).
   
 
-log(_State,String,Params) ->
-  ok.
+%log(_State,String,Params) ->
+%  ok.
 %  io:format(String ++ "\n",Params).
 
 
