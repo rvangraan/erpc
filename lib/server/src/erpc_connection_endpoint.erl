@@ -22,7 +22,7 @@
 	 stream_done/2]).
 
 %% gen_server callbacks
--export([init/1, handle_call/3, handle_info/2,
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	 terminate/2, code_change/3]).
 
 -record(state, {socket}).
@@ -70,6 +70,8 @@ handle_call({stream_done,StreamRecvPID},From,State) ->
   ok = gen_tcp:send(State#state.socket,Packet),
   {noreply,State}.
 
+handle_cast(_,State) ->
+  {noreply,State}.
 
 reply_to_original_caller(State,OrigFrom,Result) ->
   Term = {rpc_result,OrigFrom,Result},
@@ -85,7 +87,7 @@ handle_info({tcp_closed,_Socket}, State) ->
 %%--------------------------------------------------------------------
 %% handle tcp error
 
-handle_info({tcp_error,_Socket,Reason}, State) ->
+handle_info({tcp_error,_Socket,_Reason}, State) ->
 %  log(State,"connection closed, error: ~p",[Reason]),
   {stop,normal,State};
 
@@ -121,10 +123,10 @@ process_command(State,{create_stream_sender,OrigFrom,StreamRecvPID}) ->
   {ok,StreamSendPID} = erpc_stream_send:start_link(self(),StreamRecvPID),
   reply_to_original_caller(State,OrigFrom,{ok,StreamSendPID}),
   ok;
-process_command(State,{reply,From,Result}) ->
+process_command(_State,{reply,From,Result}) ->
   ok = do_reply(From,Result),
   ok;
-process_command(State,{deallocate_remote_stream_sender,RemoteStreamSendPID}) ->
+process_command(_State,{deallocate_remote_stream_sender,RemoteStreamSendPID}) ->
   ok = erpc_stream_send:deallocate(RemoteStreamSendPID).
 
 do_reply(From,Result) ->
@@ -133,5 +135,5 @@ do_reply(From,Result) ->
 		 end),
   ok.
 
-log(_State,String,Params) ->
-  io:format(String++"\n",Params).
+%log(_State,String,Params) ->
+%  io:format(String++"\n",Params).

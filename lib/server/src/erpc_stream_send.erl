@@ -77,7 +77,7 @@ init([Owner,ConnectionEndPoint,StreamRecvPID]) ->
 %%                                      {stop, Reason, State}
 %% Description: Handling call messages
 %%--------------------------------------------------------------------
-handle_call({stream_call,Message}, From, State) ->
+handle_call({stream_call,Message}, _From, State) ->
   Reply = erpc_connection_endpoint:stream_call(State#state.connection_endpoint,State#state.stream_recv_pid,Message),
   {reply, Reply, State};
 handle_call(stream_done,_From,State) ->
@@ -97,7 +97,7 @@ handle_cast(stop, State) ->
 %%                                       {stop, Reason, State}
 %% Description: Handling all non call/cast messages
 %%--------------------------------------------------------------------
-handle_info({'DOWN',Monitor,process,_OwnerPID,_Reason}, State) ->
+handle_info({'DOWN',_Monitor,process,_OwnerPID,_Reason}, State) ->
   {stop,normal, State};
 handle_info({'EXIT',_PID,normal},State) ->
   {noreply,State}.
