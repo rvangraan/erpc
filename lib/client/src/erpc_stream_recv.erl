@@ -27,13 +27,8 @@
 	        owner_monitor,
 	        connection_monitor}).
 
-%%====================================================================
-%% API
-%%====================================================================
 %%--------------------------------------------------------------------
-%% Function: start_link() -> {ok,Pid} | ignore | {error,Error}
-%% Description: Starts the server
-%%--------------------------------------------------------------------
+
 start_link(Groupname,ModuleName,InitParams) ->
   Owner = self(),
   gen_server:start_link(?MODULE, [Owner,Groupname,ModuleName,InitParams], []).
@@ -46,17 +41,9 @@ stream_close(PID) ->
 
 stream_send_pid(PID) ->
   gen_server:call(PID,stream_send_pid).
-%%====================================================================
-%% gen_server callbacks
-%%====================================================================
 
 %%--------------------------------------------------------------------
-%% Function: init(Args) -> {ok, State} |
-%%                         {ok, State, Timeout} |
-%%                         ignore               |
-%%                         {stop, Reason}
-%% Description: Initiates the server
-%%--------------------------------------------------------------------
+
 init([Owner,Groupname,ModuleName,InitParams]) ->
   StreamPid = self(),
   process_flag(trap_exit,true),
@@ -72,15 +59,6 @@ init([Owner,Groupname,ModuleName,InitParams]) ->
 	      connection_monitor = ConnMonitor,
 	      stream_send_pid    = StreamSendPID}}.
 
-%%--------------------------------------------------------------------
-%% Function: %% handle_call(Request, From, State) -> {reply, Reply, State} |
-%%                                      {reply, Reply, State, Timeout} |
-%%                                      {noreply, State} |
-%%                                      {noreply, State, Timeout} |
-%%                                      {stop, Reason, Reply, State} |
-%%                                      {stop, Reason, State}
-%% Description: Handling call messages
-%%--------------------------------------------------------------------
 handle_call(stream_send_pid, _From, State) ->
   {reply,State#state.stream_send_pid,State};
 handle_call({stream_call,Message}, _From, State) ->
@@ -94,21 +72,9 @@ handle_call(stream_close, _From, State) ->
   Reply = {ok,NewState},
   {stop,normal,Reply, State#state{module_state=NewState}}.
 
-%%--------------------------------------------------------------------
-%% Function: handle_cast(Msg, State) -> {noreply, State} |
-%%                                      {noreply, State, Timeout} |
-%%                                      {stop, Reason, State}
-%% Description: Handling cast messages
-%%--------------------------------------------------------------------
 handle_cast(_Msg, State) ->
   {noreply, State}.
 
-%%--------------------------------------------------------------------
-%% Function: handle_info(Info, State) -> {noreply, State} |
-%%                                       {noreply, State, Timeout} |
-%%                                       {stop, Reason, State}
-%% Description: Handling all non call/cast messages
-%%--------------------------------------------------------------------
 handle_info({'DOWN',Monitor,process,_OwnerPID,_Reason}, State) when State#state.owner_monitor == Monitor->
   io:format("Owner died for stream recv!\n"),
   %% Drop the send pid - no use deallocating it when the connection died
@@ -118,25 +84,11 @@ handle_info({'DOWN',Monitor,process,_ConnectionPID,_Reason}, State) when State#s
   %% Drop the send pid - no use deallocating it when the connection died
   {stop,normal,State#state{stream_send_pid=undefined}}.
 
-%%--------------------------------------------------------------------
-%% Function: terminate(Reason, State) -> void()
-%% Description: This function is called by a gen_server when it is about to
-%% terminate. It should be the opposite of Module:init/1 and do any necessary
-%% cleaning up. When it returns, the gen_server terminates with Reason.
-%% The return value is ignored.
-%%--------------------------------------------------------------------
+
 terminate(_Reason, State) ->
   ok = erpc:deallocate_remote_stream_sender(State#state.connection,
 					    State#state.stream_send_pid),
   ok.
 
-%%--------------------------------------------------------------------
-%% Func: code_change(OldVsn, State, Extra) -> {ok, NewState}
-%% Description: Convert process state when code is changed
-%%--------------------------------------------------------------------
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
-
-%%--------------------------------------------------------------------
-%%% Internal functions
-%%--------------------------------------------------------------------

@@ -1,4 +1,8 @@
 {application, erpc,
- [{description, "ERPC"},
-  {vsn, "0.0.1"}]}.
- 
+ [{description, "Erlang Remote Procedure Call"},
+  {vsn, "0.0.1"},
+  {applications, [kernel,
+                  stdlib
+                 ]},
+  {env, []}
+ ]}.

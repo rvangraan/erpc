@@ -13,30 +13,30 @@
 
 %% API
 -export([start_link/2,
-	 connection_count/1,
-	 get_ready_connection/1,
-	 add_ready_connection/1,
-	 remove_ready_connection/1,
-	 create_stream/3,
-	 close_stream/1,
-	 create_remote_stream_sender/2,
-	 deallocate_remote_stream_sender/2,
-	 call/3,
-	 call/4,
-	 status/1,
-	 extended_status/1]).
+	       connection_count/1,
+	       get_ready_connection/1,
+	       add_ready_connection/1,
+	       remove_ready_connection/1,
+	       create_stream/3,
+	       close_stream/1,
+	       create_remote_stream_sender/2,
+	       deallocate_remote_stream_sender/2,
+	       call/3,
+	       call/4,
+	       status/1,
+	       extended_status/1
+        ]).
 
 %% gen_server callbacks
--export([init/1, handle_call/3, handle_cast/2, handle_info/2,
-	 terminate/2, code_change/3]).
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
--record(state, {groupname,
-		owner,
-		monitor,
-		connections=[],
-	        ready_connections=[]}).
+-record(state,{groupname,
+		           owner,
+		           monitor,
+		           connections=[],
+	             ready_connections=[]
+              }).
 
-%%--------------------------------------------------------------------
 %%Backends -> [{Address,Port}] 
 start_link(Groupname,Backends) ->
   Owner = self(),
@@ -51,8 +51,6 @@ where(G) ->
       R
   end.
   
-      
-
 connection_count(G) ->
   gen_server:call(where(G),connection_count).
 
@@ -109,16 +107,9 @@ create_remote_stream_sender(G,StreamRecvPID) ->
 
 deallocate_remote_stream_sender(Connection,RemoteStreamSendPID) ->
   ok = erpc_connection:deallocate_remote_stream_sender(Connection,RemoteStreamSendPID).
-  
-  
-  
-  
-
-%%====================================================================
-%% gen_server callbacks
-%%====================================================================
 
 %%--------------------------------------------------------------------
+
 init([Owner,Groupname,Backends]) ->
   process_flag(trap_exit,true),
   true = gproc:reg({n,l,{erpc,Groupname}},self()),
@@ -128,8 +119,6 @@ init([Owner,Groupname,Backends]) ->
 	      groupname=Groupname,
 	      monitor=Monitor,
 	      connections=Connections}}.
-
-%%--------------------------------------------------------------------
 
 handle_call(get_ready_connection,_From, State) when State#state.ready_connections == [] ->
   Reply = {error,no_backend},
@@ -165,28 +154,21 @@ handle_call(extended_status, _From, State) when State#state.ready_connections =/
   Reply = {ok,ready,State#state.ready_connections},
   {reply, Reply, State}.
 
-%%--------------------------------------------------------------------
 handle_cast(_Msg, State) ->
   {noreply, State}.
-
-%%--------------------------------------------------------------------
 
 handle_info({'EXIT',PID,Reason},State) ->
   {stop,{connection_exit,PID,Reason},State};
 handle_info({'DOWN',Monitor,process,_Object,_Other}, State) when Monitor == State#state.monitor->
   {stop,normal,State}.
 
-%%--------------------------------------------------------------------
 terminate(_Reason, State) ->
   Connections = State#state.connections,
   lists:foreach(fun(PID) -> ok = shutdown_connection(PID) end,Connections),
   ok.
 
-%%--------------------------------------------------------------------
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
-
-%%--------------------------------------------------------------------
 
 start_connections(Groupname,Backends) ->
   F = fun({Address,Port}) ->
@@ -203,8 +185,6 @@ shutdown_connection(PID) ->
       ok
   end.
 
-
-%%--------------------------------------------------------------------
 %% @doc Returns whether or not the current process has an active Mnesia transaction or not
 %% @end
 -spec in_mnesia_transaction() -> true | false.

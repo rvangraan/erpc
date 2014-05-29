@@ -27,9 +27,7 @@
 
 -record(state, {socket}).
 
-%%====================================================================
-%% API
-%%====================================================================
+%%--------------------------------------------------------------------
 
 start_link(Socket) ->
   gen_server:start_link(?MODULE, [Socket], []).
@@ -49,13 +47,12 @@ stream_done(Connection,StreamRecvPID) ->
   gen_server:call(Connection,{stream_done,StreamRecvPID}).
 
 %%--------------------------------------------------------------------
+
 init([Socket]) ->
 %  io:format("erpc connection endpoint started\n"),
-  ok = inet:setopts(Socket,[{active,true},{packet,4},binary]),
-  
-  {ok, #state{socket    = Socket}}.
+  ok = inet:setopts(Socket,[{active,true},{packet,4},binary]),  
+  {ok, #state{socket = Socket}}.
 
-%%--------------------------------------------------------------------
 handle_call({complete,OrigFrom,Result}, _From, State) ->
   reply_to_original_caller(State,OrigFrom,Result),
   {reply, ok, State};
@@ -78,35 +75,26 @@ reply_to_original_caller(State,OrigFrom,Result) ->
   Packet = term_to_binary(Term),
   ok = gen_tcp:send(State#state.socket,Packet).
 
-
-%%--------------------------------------------------------------------
 handle_info({tcp_closed,_Socket}, State) -> 
 %  log(State,"connection closed",[]),
   {stop,normal,State};
 
-%%--------------------------------------------------------------------
-%% handle tcp error
-
 handle_info({tcp_error,_Socket,_Reason}, State) ->
 %  log(State,"connection closed, error: ~p",[Reason]),
   {stop,normal,State};
-
-%%--------------------------------------------------------------------
-%% handle tcp data
 
 handle_info({tcp,_Socket,Data}, State) ->
   Command = binary_to_term(Data),
   ok = process_command(State,Command),
   {noreply,State}.
 
-%%--------------------------------------------------------------------
 terminate(_Reason, _State) ->
   ok.
 
-%%--------------------------------------------------------------------
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
 
+%%--------------------------------------------------------------------
 
 process_command(State,{echo,Seq}) ->
   Term = {echo_response,Seq},
