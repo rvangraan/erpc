@@ -21,7 +21,7 @@ Features:
  
 Issues:
  1. No support for SSL yet
- 2. Round Robbin load balancing isn't plugable
+ 2. Round Robin load balancing isn't plugable
  3. Large blobs in either the request or the response can delay other requests or responses
  4. No support for alarms 
 
