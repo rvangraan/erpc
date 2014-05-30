@@ -12,7 +12,7 @@ ERPC uses a set of TCP/IP connections to proxy requests to the server and receiv
 Features:
  * Calls are completely synchronous from client to server
  * Exceptions and associated stacks are maintained across the interface
- * A basic round-robbin load balancing mechanism allows clients to transparently
+ * A basic round-robin load balancing mechanism allows clients to transparently
    failover between multiple backends
  * ERPC includes a call-back and streaming mechanism that allows the server to synchronously
    stream data to the client. This is useful for use cases such as sending files via HTTP etc.
