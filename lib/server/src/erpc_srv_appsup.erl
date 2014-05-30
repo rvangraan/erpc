@@ -17,9 +17,8 @@
 
 -define(SERVER, ?MODULE).
 
-%%====================================================================
-%% Application callbacks
-%%====================================================================
+%%--------------------------------------------------------------------
+
 start(_Type, Args) ->
   case start_link(Args) of
     {ok, Pid} -> 
@@ -31,24 +30,12 @@ start(_Type, Args) ->
 stop(_State) ->
   ok.
 
-
-%%====================================================================
-%% API functions
-%%====================================================================
 start_link(Args) ->
   supervisor:start_link(?MODULE, Args).
 
-%%====================================================================
-%% Supervisor callbacks
-%%====================================================================
 init([]) ->
   SupFlags = {one_for_one, 200, 600},
   {ok,Port} = application:get_env(erpc_srv,server_port),
-  ERPC  = {erpc_srv,{erpc_srv,start_link,[Port]},
+  ERPC = {erpc_srv,{erpc_srv,start_link,[Port]},
 	      permanent,2000,worker,[erpc_srv]},
   {ok,{SupFlags, [ERPC]}}.
-
-%%====================================================================
-%% Internal functions
-%%====================================================================
-

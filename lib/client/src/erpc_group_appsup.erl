@@ -46,16 +46,16 @@ init([]) ->
   case application:get_env(erpc_client,groups) of
     {ok,[]} ->
       error_logger:warning_report(["ERPC SUPERVISOR - No ERPC groups defined",
-				   {pid,self()},
-				   {reason, "Group specification is missing - no groups started"}]),
+				                           {pid,self()},
+				                           {reason, "Group specification is missing - no groups started"}]),
       {ok,{SupFlags, []}};
     {ok,Groups} when is_list(Groups) ->
       Specs = lists:flatten([make_spec(Group) || Group <- Groups]),
       {ok,{SupFlags, Specs}};
     undefined -> 
       error_logger:warning_report(["ERPC SUPERVISOR - No ERPC groups defined",
-				 {pid,self()},
-				 {reason, "Group specification is missing - no groups started"}]),
+				                          {pid,self()},
+				                          {reason, "Group specification is missing - no groups started"}]),
       {ok,{SupFlags, []}}
   end.
 
@@ -67,18 +67,7 @@ make_spec({GroupName,Config}) when is_atom(GroupName),
    permanent,2000,supervisor,[]};
 make_spec(InvalidSpec) ->
   error_logger:error_report(["ERPC SUPERVISOR - Group specification error",
-			     {pid,self()},
-			     {reason, "Group specification is invalid - group is not started"},
-			     {spec,InvalidSpec}]),
+			                       {pid,self()},
+			                       {reason, "Group specification is invalid - group is not started"},
+			                       {spec,InvalidSpec}]),
   [].
-  
-  
-
-
-
-
-%%====================================================================
-%% Internal functions
-%%====================================================================
-
-
